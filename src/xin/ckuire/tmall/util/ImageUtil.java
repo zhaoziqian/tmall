@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-public class ImageUtile {
+public class ImageUtil {
 	
 	/**
 	 * 用来把传进来的图片变成真jpg

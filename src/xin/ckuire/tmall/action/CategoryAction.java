@@ -17,18 +17,18 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.sun.imageio.plugins.common.ImageUtil;
 
 import xin.ckuire.tmall.entity.Category;
 import xin.ckuire.tmall.service.CategoryService;
-import xin.ckuire.tmall.util.ImageUtile;
+import xin.ckuire.tmall.util.ImageUtil;
 import xin.ckuire.tmall.util.Page;
 
 @Namespace("/")
 @ParentPackage("basicstruts")
 @Results({
 	@Result(name="listCategory",location="/admin/listCategory.jsp"),
-	@Result(name="listCategoryPage", type = "redirect", location="/admin_category_list")
+	@Result(name="listCategoryPage", type = "redirect", location="/admin_category_list"),
+	@Result(name="editCategory", location="/admin/editCategory.jsp")
 })
 public class CategoryAction {
 	
@@ -62,7 +62,7 @@ public class CategoryAction {
 	    File file = new File(imageFolder,category.getId()+".jpg");
 	    try {
 	        FileUtils.copyFile(img, file);
-	        BufferedImage img = ImageUtile.change2jpg(file);
+	        BufferedImage img = ImageUtil.change2jpg(file);
 	        ImageIO.write(img, "jpg", file);            
 	    } catch (IOException e) {
 	        e.printStackTrace();
@@ -70,26 +70,39 @@ public class CategoryAction {
 	    return "listCategoryPage";
 	}   
 	
+	
 	@Action("admin_category_delete")
 	public String delete() {
 	    categoryService.deleteCategory(category);
 	    return "listCategoryPage";
 	}  
 	
+	@Action("admin_category_edit")
+    public String edit() {
+        int id = category.getId();
+        category = categoryService.searchCategoryById(id);
+        return "editCategory";
+    }   
 	
 	
+	@Action("admin_category_update")
+	    public String update() {
+	        categoryService.updateCateGory(category);
+	        // 如果有修改图片，则..修改图片在图片仓库中
+	        if(null!=img){
+	            File imageFolder= new File(ServletActionContext.getServletContext().getRealPath("img/category"));
+	            File file = new File(imageFolder,category.getId()+".jpg");
+	            try {
+	                FileUtils.copyFile(img, file);
+	                BufferedImage img = ImageUtil.change2jpg(file);
+	                ImageIO.write(img, "jpg", file);
+	            } catch (IOException e) {
+	                e.printStackTrace();
+	            }           
+	        }
+	        return "listCategoryPage";
+	    }   
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
-
 	public Category getCategory() {
 		return category;
 	}
@@ -113,7 +126,6 @@ public class CategoryAction {
 	public void setCategories(List<Category> categories) {
 		this.categories = categories;
 	}
-
 
 	public Page getPage() {
 		return page;
