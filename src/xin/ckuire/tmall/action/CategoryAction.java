@@ -46,17 +46,17 @@ public class CategoryAction {
 			page = new Page();
 		}
 		// 查询总数
-		int total = categoryService.getCategoryTotal();
+		int total = categoryService.total();
 		page.setTotal(total);
 		
-		categories = categoryService.searchCategorByPage(page);
+		categories = categoryService.searchByPage(page);
 		System.out.println(categories);
 		return "listCategory";
 	}
 	
 	@Action("admin_category_add")
 	public String add() {
-	    categoryService.addCategory(category);
+	    categoryService.save(category);
 	    System.out.println(ServletActionContext.getServletContext().getRealPath("img/category"));
 	    File imageFolder= new File(ServletActionContext.getServletContext().getRealPath("img/category"));
 	    File file = new File(imageFolder,category.getId()+".jpg");
@@ -73,21 +73,21 @@ public class CategoryAction {
 	
 	@Action("admin_category_delete")
 	public String delete() {
-	    categoryService.deleteCategory(category);
+	    categoryService.delete(category);
 	    return "listCategoryPage";
 	}  
 	
 	@Action("admin_category_edit")
     public String edit() {
         int id = category.getId();
-        category = categoryService.searchCategoryById(id);
+        category = (Category) categoryService.searchById(id);
         return "editCategory";
     }   
 	
 	
 	@Action("admin_category_update")
 	    public String update() {
-	        categoryService.updateCateGory(category);
+	        categoryService.update(category);
 	        // 如果有修改图片，则..修改图片在图片仓库中
 	        if(null!=img){
 	            File imageFolder= new File(ServletActionContext.getServletContext().getRealPath("img/category"));
